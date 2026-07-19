@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CORE Framework Scoresheet</title>
+  <style>
+    :root {
+      --blue-dark: #0b3d91;
+      --blue: #1a56db;
+      --blue-light: #e8f0fe;
+      --green-dark: #0d5c3d;
+      --green: #0f766e;
+      --green-light: #e6f5f0;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-300: #cbd5e1;
+      --gray-600: #475569;
+      --gray-800: #1e293b;
+      --red: #dc2626;
+      --orange: #ea580c;
+      --success: #16a34a;
+      --purple: #7c3aed;
+
+      --bg: #f0f4f8;
+      --surface: #ffffff;
+      --surface-2: #f8fafc;
+      --text: #1e293b;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+      --input-bg: #ffffff;
+      --card-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      --sidebar-bg: #0f172a;
+      --sidebar-text: #e2e8f0;
+      --sidebar-muted: #94a3b8;
+      --sidebar-hover: #1e293b;
+      --sidebar-active: #1e3a5f;
+    }
+
+    [data-theme="dark"] {
+      --blue-dark: #3b82f6;
+      --blue: #60a5fa;
+      --blue-light: #1e3a5f;
+      --green-dark: #34d399;
+      --green: #6ee7b7;
+      --green-light: #064e3b;
+      --gray-50: #1e293b;
+      --gray-100: #334155;
+      --gray-200: #475569;
+      --gray-300: #64748b;
+      --gray-600: #94a3b8;
+      --gray-800: #f1f5f9;
+      --success: #4ade80;
+      --purple: #a78bfa;
+
+      --bg: #0b1120;
+      --surface: #111827;
+      --surface-2: #1e293b;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --input-bg: #1e293b;
+      --card-shadow: 0 1px 4px rgba(0,0,0,0.35);
+      --sidebar-bg: #020617;
+      --sidebar-text: #e2e8f0;
+      --sidebar-muted: #64748b;
+      --sidebar-hover: #1e293b;
+      --sidebar-active: #1e3a5f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, #0b3d91 0%, #1a56db 100%);
+      color: white;
+      padding: 1.1rem 1.5rem;
+      box-shadow: 0 4px 12px rgba(11, 61, 145, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+    }
+
+    .logo h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+    .logo span { font-size: 0.75rem; opacity: 0.85; font-weight: 400; display: block; }
+
+    .header-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+
+    /* Portfolio sidebar */
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 0;
+      max-width: 1300px;
+      margin: 0 auto;
+      min-height: calc(100vh - 70px);
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .sidebar.open { display: block; position: fixed; inset: 0; z-index: 200; background: white; overflow-y: auto; }
+    }
+
+    .sidebar {
+      background: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      padding: 1rem 0.85rem;
+      border-right: 1px solid var(--border);
+    }
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      padding: 0 0.25rem;
+    }
+    .sidebar-header h3 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--sidebar-muted);
+    }
+    .project-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 1rem;
+      max-height: 55vh;
+      overflow-y: auto;
+    }
+    .project-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+    }
+    .project-item:hover { background: var(--sidebar-hover); }
+    .project-item.active {
+      background: var(--sidebar-active);
+      border-color: #3b82f6;
+    }
+    .project-item .proj-name {
+      flex: 1;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .project-item .proj-score {
+      font-size: 0.72rem;
+      color: var(--sidebar-muted);
+      font-weight: 600;
+    }
+    .project-item .proj-actions {
+      display: none;
+      gap: 0.2rem;
+    }
+    .project-item:hover .proj-actions { display: flex; }
+    .proj-actions button {
+      background: transparent;
+      border: none;
+      color: var(--sidebar-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      padding: 0.15rem;
+    }
+    .proj-actions button:hover { color: white; }
+    .sidebar-btn {
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 0.4rem;
+      font-size: 0.82rem;
+    }
+    .main-content {
+      padding: 1.25rem 1rem 4rem;
+      overflow-x: hidden;
+    }
+    .mobile-portfolio-btn {
+      display: none;
+    }
+    @media (max-width: 900px) {
+      .mobile-portfolio-btn { display: inline-flex; }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-primary { background: white; color: var(--blue-dark); }
+    .btn-primary:hover { background: #f0f7ff; transform: translateY(-1px); }
+    .btn-secondary { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.25); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #15803d; }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--surface-2); }
+    .btn-purple { background: var(--purple); color: white; }
+    .btn-purple:hover { background: #6d28d9; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem 4rem;
+    }
+
+    /* Project + Live Data bar */
+    .project-bar {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 1.15rem 1.35rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1.4fr 140px auto;
+      gap: 0.9rem;
+      align-items: end;
+    }
+
+    @media (max-width: 720px) {
+      .project-bar { grid-template-columns: 1fr; }
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 0.6rem 0.85rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background: var(--input-bg);
+      color: var(--text);
+      transition: border-color 0.15s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.12);
+    }
+
+    /* Live Data Panel */
+    .live-panel {
+      background: var(--surface);
+      border-radius: 12px;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: none;
+    }
+
+    .live-panel.visible { display: block; }
+
+    .live-header {
+      background: linear-gradient(135deg, #4c1d95, #7c3aed);
+      color: white;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .live-header h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .live-meta {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+
+    .live-body {
+      padding: 1.1rem 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.85rem;
+    }
+
+    .metric-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+    }
+
+    .metric-card .label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .metric-card .value {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .metric-card .sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .metric-card.highlight {
+      border-color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 12%, var(--surface));
+    }
+
+    .live-links {
+      padding: 0 1.25rem 1rem;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+    }
+
+    .live-links a {
+      color: var(--purple);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .live-links a:hover { text-decoration: underline; }
+
+    .data-status {
+      font-size: 0.8rem;
+      padding: 0.5rem 1rem;
+      background: #fef3c7;
+      color: #92400e;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .data-status.error { background: #fee2e2; color: #991b1b; }
+    .data-status.ok { background: #dcfce7; color: #166534; }
+    .data-status.loading { background: #e0e7ff; color: #3730a3; }
+
+    /* Step nav */
+    .step-nav {
+      display: flex;
+      gap: 0.45rem;
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+    }
+
+    .step-tab {
+      flex: 1;
+      min-width: 105px;
+      padding: 0.65rem 0.4rem;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .step-tab:hover { border-color: var(--blue); color: var(--blue); }
+    .step-tab.active {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+      box-shadow: 0 4px 12px rgba(26, 86, 219, 0.25);
+    }
+    .step-tab.completed { border-color: var(--success); color: var(--success); }
+    .step-tab.active.completed {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    .step-tab .step-num { display: block; font-size: 0.65rem; opacity: 0.8; margin-bottom: 0.1rem; }
+    .step-tab .step-score { display: block; font-size: 0.68rem; margin-top: 0.15rem; opacity: 0.9; }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border-radius: 14px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-header {
+      padding: 1.1rem 1.35rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.9rem;
+      color: white;
+    }
+
+    .card-header.blue { background: linear-gradient(135deg, #0b3d91, #1a56db); }
+    .card-header.green { background: linear-gradient(135deg, #0d5c3d, #0f766e); }
+    .card-header.dark { background: linear-gradient(135deg, #0f172a, #1e293b); }
+
+    .card-header-icon {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+
+    .card-header h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.15rem; }
+    .card-header p { font-size: 0.84rem; opacity: 0.9; }
+
+    .card-body { padding: 0; }
+
+    /* Criteria */
+    .criteria-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.9rem;
+      padding: 1rem 1.35rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+    .criteria-row:last-child { border-bottom: none; }
+
+    .criteria-info { display: flex; gap: 0.75rem; align-items: flex-start; }
+
+    .criteria-icon {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.95rem; flex-shrink: 0;
+    }
+    .step-econ .criteria-icon { background: var(--green-light); color: var(--green); }
+
+    .criteria-text h3 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.1rem; color: var(--text); }
+    .criteria-text p { font-size: 0.78rem; color: var(--text-muted); }
+
+    .live-hint {
+      margin-top: 0.35rem;
+      font-size: 0.72rem;
+      color: var(--purple);
+      background: color-mix(in srgb, var(--purple) 15%, var(--surface));
+      padding: 0.25rem 0.5rem;
+      border-radius: 6px;
+      display: inline-block;
+      max-width: 100%;
+    }
+    .live-hint strong { font-weight: 700; }
+
+    .rec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      margin-top: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.22rem 0.55rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px dashed transparent;
+    }
+    .rec-badge:hover {
+      border-color: currentColor;
+      transform: translateY(-1px);
+    }
+    .rec-badge.rec-2 { background: color-mix(in srgb, #16a34a 18%, var(--surface)); color: #4ade80; }
+    .rec-badge.rec-1 { background: color-mix(in srgb, #ca8a04 18%, var(--surface)); color: #fbbf24; }
+    .rec-badge.rec-0 { background: color-mix(in srgb, #dc2626 18%, var(--surface)); color: #f87171; }
+    [data-theme="light"] .rec-badge.rec-2 { background: #dcfce7; color: #166534; }
+    [data-theme="light"] .rec-badge.rec-1 { background: #fef9c3; color: #854d0e; }
+    [data-theme="light"] .rec-badge.rec-0 { background: #fee2e2; color: #991b1b; }
+    .rec-badge .rec-label { opacity: 0.85; font-weight: 500; }
+    .rec-badge .rec-reason { font-weight: 400; opacity: 0.9; font-size: 0.68rem; }
+
+    .score-options { display: flex; gap: 0.35rem; }
+
+    .score-option { position: relative; }
+    .score-option input { position: absolute; opacity: 0; width: 0; height: 0; }
+
+    .score-option label {
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-weight: 700; font-size: 0.92rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--surface);
+    }
+
+    .score-option input:checked + label {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 2px 8px rgba(26, 86, 219, 0.3);
+    }
+    .step-econ .score-option input:checked + label {
+      border-color: var(--green);
+      background: var(--green);
+      color: #064e3b;
+      box-shadow: 0 2px 8px rgba(15, 118, 110, 0.3);
+    }
+    [data-theme="dark"] .step-econ .score-option input:checked + label {
+      color: #022c22;
+    }
+    .score-option label:hover { border-color: var(--blue); color: var(--blue); }
+    .step-econ .score-option label:hover { border-color: var(--green); color: var(--green); }
+
+    /* Score footer */
+    .score-footer {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 1rem;
+      padding: 1.1rem 1.35rem;
+      background: var(--surface-2);
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 600px) { .score-footer { grid-template-columns: 1fr; } }
+
+    .score-box {
+      background: var(--surface);
+      border: 2px solid var(--blue);
+      border-radius: 12px;
+      padding: 0.9rem;
+      text-align: center;
+    }
+    .step-econ .score-box { border-color: var(--green); }
+
+    .score-box .label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--blue); margin-bottom: 0.2rem;
+    }
+    .step-econ .score-box .label { color: var(--green); }
+
+    .score-box .value { font-size: 1.65rem; font-weight: 800; color: var(--text); }
+    .score-box .value span { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); }
+
+    .why-box label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.03em; color: var(--text-muted);
+      display: block; margin-bottom: 0.35rem;
+    }
+    .why-box textarea {
+      width: 100%; min-height: 72px; padding: 0.7rem;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-size: 0.88rem; resize: vertical; font-family: inherit;
+      background: var(--input-bg); color: var(--text);
+    }
+    .why-box textarea:focus {
+      outline: none; border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+    }
+
+    .scoring-guide {
+      display: flex; flex-wrap: wrap; gap: 0.7rem 1.4rem;
+      padding: 0.8rem 1.35rem; background: var(--surface-2);
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem; color: var(--text-muted);
+    }
+    .scoring-guide strong { color: var(--text); }
+
+    .nav-buttons {
+      display: flex; justify-content: space-between; gap: 1rem; margin-top: 0.9rem;
+    }
+
+    /* Final */
+    .final-grid { display: grid; gap: 1rem; padding: 1.35rem; }
+
+    .final-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .final-table th {
+      background: var(--blue-dark); color: white;
+      padding: 0.7rem 0.9rem; text-align: left;
+      font-weight: 600; font-size: 0.78rem;
+      text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .final-table td { padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--border); color: var(--text); }
+    .final-table tr:last-child td { border-bottom: none; }
+    .final-table .total-row { background: var(--surface-2); font-weight: 700; }
+
+    .score-pill {
+      display: inline-block; padding: 0.18rem 0.55rem;
+      border-radius: 999px; font-weight: 700; font-size: 0.82rem;
+      background: var(--blue-light); color: var(--blue-dark);
+    }
+
+    .final-summary-box {
+      display: grid;
+      grid-template-columns: 130px 1fr 150px;
+      gap: 1rem; margin-top: 0.4rem;
+    }
+    @media (max-width: 700px) { .final-summary-box { grid-template-columns: 1fr; } }
+
+    .final-score-big {
+      background: var(--surface); border: 3px solid var(--blue);
+      border-radius: 14px; padding: 1.1rem; text-align: center;
+    }
+    .final-score-big .label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      color: var(--blue); margin-bottom: 0.2rem;
+    }
+    .final-score-big .value { font-size: 2.1rem; font-weight: 800; line-height: 1; color: var(--text); }
+    .final-score-big .max { font-size: 0.88rem; color: var(--text-muted); font-weight: 600; }
+
+    .rating-box {
+      background: var(--surface); border: 2px solid var(--border);
+      border-radius: 12px; padding: 0.9rem; text-align: center;
+    }
+    .rating-box .label {
+      font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 0.35rem;
+    }
+    .rating-badge {
+      display: inline-block; padding: 0.35rem 0.9rem;
+      border-radius: 999px; font-weight: 800; font-size: 0.92rem;
+    }
+    .rating-strong { background: color-mix(in srgb, #16a34a 20%, var(--surface)); color: #4ade80; }
+    .rating-moderate { background: color-mix(in srgb, #ca8a04 20%, var(--surface)); color: #fbbf24; }
+    .rating-weak { background: color-mix(in srgb, #ea580c 20%, var(--surface)); color: #fb923c; }
+    .rating-very-weak { background: color-mix(in srgb, #dc2626 20%, var(--surface)); color: #f87171; }
+    [data-theme="light"] .rating-strong { background: #dcfce7; color: #166534; }
+    [data-theme="light"] .rating-moderate { background: #fef9c3; color: #854d0e; }
+    [data-theme="light"] .rating-weak { background: #ffedd5; color: #9a3412; }
+    [data-theme="light"] .rating-very-weak { background: #fee2e2; color: #991b1b; }
+
+    .summary-text textarea {
+      width: 100%; min-height: 100px; padding: 0.8rem;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font-size: 0.88rem; font-family: inherit; resize: vertical;
+      background: var(--input-bg); color: var(--text);
+    }
+    .summary-text label {
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+      color: var(--text-muted); display: block; margin-bottom: 0.35rem;
+    }
+
+    .rating-legend {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0.7rem; padding: 1.1rem 1.35rem;
+      background: var(--surface-2); border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+    }
+    @media (max-width: 700px) { .rating-legend { grid-template-columns: 1fr 1fr; } }
+
+    .legend-item {
+      padding: 0.55rem 0.7rem; border-radius: 8px;
+      background: var(--surface); border-left: 4px solid;
+      color: var(--text);
+    }
+    .legend-item.strong { border-color: #16a34a; }
+    .legend-item.moderate { border-color: #ca8a04; }
+    .legend-item.weak { border-color: #ea580c; }
+    .legend-item.very-weak { border-color: #dc2626; }
+    .legend-item strong { display: block; margin-bottom: 0.12rem; }
+
+    .toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      background: var(--gray-800); color: white;
+      padding: 0.7rem 1.2rem; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      opacity: 0; transform: translateY(12px);
+      transition: all 0.25s ease; z-index: 200; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Search results dropdown */
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 50;
+      display: none;
+    }
+    .search-results.show { display: block; }
+    .search-item {
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    .search-item:hover { background: var(--blue-light); }
+    .search-item img { width: 24px; height: 24px; border-radius: 50%; }
+    .search-item .rank { color: var(--text-muted); font-size: 0.75rem; min-width: 28px; }
+
+    .search-wrap { position: relative; }
+
+    @media print {
+      .app-header, .step-nav, .nav-buttons, .header-actions, .btn, .live-panel { display: none !important; }
+      .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+      body { background: white; }
+      .container { padding: 0; max-width: 100%; }
+    }
+
+    .step-panel { display: none; }
+    .step-panel.active { display: block; }
+
+    /* ===== COMPARISON MODE ===== */
+    .compare-controls {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--card-shadow);
+    }
+    .compare-controls h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .compare-select-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.9rem;
+    }
+    .compare-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-2);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .compare-chip:hover { border-color: var(--blue); }
+    .compare-chip.selected {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+    .compare-chip .chip-score {
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+    .compare-actions {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .compare-table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--card-shadow);
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      min-width: 640px;
+    }
+    .compare-table th {
+      background: var(--surface-2);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      padding: 0.75rem 0.9rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+    }
+    .compare-table td {
+      padding: 0.7rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table .metric-label {
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      white-space: nowrap;
+    }
+    .compare-table .best {
+      background: color-mix(in srgb, #16a34a 14%, var(--surface));
+      font-weight: 700;
+    }
+    .compare-table .worst {
+      background: color-mix(in srgb, #dc2626 10%, var(--surface));
+    }
+    .compare-project-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      min-width: 110px;
+    }
+    .compare-project-header .name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .compare-project-header .total {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--blue);
+    }
+    .compare-section-row td {
+      background: var(--surface-2);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      padding-top: 0.85rem;
+    }
+    .compare-empty {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: var(--text-muted);
+    }
+    .compare-empty h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+
+    /* ===== AUTO-ANALYZE / INSTANT RATING ===== */
+    .analysis-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      display: none;
+    }
+    .analysis-panel.visible { display: block; }
+    .analysis-header {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      padding: 1.1rem 1.35rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    [data-theme="dark"] .analysis-header {
+      background: linear-gradient(135deg, #020617, #0f172a);
+    }
+    .analysis-header h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.2rem;
+    }
+    .analysis-header .sub {
+      font-size: 0.8rem;
+      opacity: 0.85;
+    }
+    .analysis-body {
+      padding: 1.25rem 1.35rem;
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 700px) {
+      .analysis-body { grid-template-columns: 1fr; }
+    }
+    .analysis-score-box {
+      text-align: center;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--surface-2);
+    }
+    .analysis-score-box .big-score {
+      font-size: 2.4rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text);
+    }
+    .analysis-score-box .max {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .analysis-score-box .conf {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .analysis-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    @media (max-width: 600px) {
+      .analysis-columns { grid-template-columns: 1fr; }
+    }
+    .analysis-list h4 {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.45rem;
+      color: var(--text-muted);
+    }
+    .analysis-list ul {
+      list-style: none;
+      font-size: 0.84rem;
+      color: var(--text);
+    }
+    .analysis-list li {
+      padding: 0.3rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 0.4rem;
+    }
+    .analysis-list li:last-child { border-bottom: none; }
+    .analysis-list .pos { color: #16a34a; }
+    .analysis-list .neg { color: #dc2626; }
+    [data-theme="dark"] .analysis-list .pos { color: #4ade80; }
+    [data-theme="dark"] .analysis-list .neg { color: #f87171; }
+    .analysis-pillars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 600px) {
+      .analysis-pillars { grid-template-columns: 1fr 1fr; }
+    }
+    .pillar-card {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.7rem;
+      text-align: center;
+    }
+    .pillar-card .label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .pillar-card .val {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .analysis-actions {
+      padding: 0 1.35rem 1.2rem;
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+    .analysis-thesis {
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      background: var(--surface-2);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .analysis-thesis strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+    }
+
+
+    .red-flag-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.65rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    .red-flag-item:last-child { border-bottom: none; }
+    .red-flag-item input {
+      margin-top: 0.2rem;
+      width: 16px;
+      height: 16px;
+      accent-color: #dc2626;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .red-flag-item.checked {
+      color: #dc2626;
+    }
+    [data-theme="dark"] .red-flag-item.checked { color: #f87171; }
+    .red-flag-item .flag-text { line-height: 1.4; }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">◆</div>
+        <div>
+          <h1>CORE Framework Scoresheet</h1>
+          <span>A tool to help analyze crypto projects.</span>
+          <span style="font-size:0.75rem; opacity:0.85; display:block; margin-top:0.25rem;">Free for everyone. If you find it useful, support my continued efforts at <a href="https://buymeacoffee.com/hodlwithnoah" target="_blank" style="color:inherit; text-decoration:underline;">buymeacoffee.com/hodlwithnoah</a>.</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-secondary mobile-portfolio-btn" onclick="toggleSidebar()">☰ Projects</button>
+        <button class="btn btn-secondary" id="themeToggle" onclick="toggleTheme()" title="Toggle dark mode">🌙</button>
+        <button class="btn btn-secondary" onclick="resetCurrentProject()" title="Clear scores on current project">Reset</button>
+        <button class="btn btn-secondary" onclick="window.print()">Print</button>
+        <button class="btn btn-primary" onclick="exportJSON()">Export</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- SIDEBAR: Portfolio -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h3>Portfolio</h3>
+        <button class="btn btn-secondary" style="padding:0.25rem 0.5rem;font-size:0.75rem;display:none;" id="closeSidebarBtn" onclick="toggleSidebar()">✕</button>
+      </div>
+      <button class="btn btn-primary sidebar-btn" onclick="createNewProject()">+ New Project</button>
+      <div class="project-list" id="projectList">
+        <!-- filled by JS -->
+      </div>
+      <div style="font-size:0.72rem;color:#64748b;padding:0.5rem 0.25rem;line-height:1.4;">
+        Click a project to switch.<br>Scores auto-save.
+      </div>
+    </aside>
+
+    <div class="main-content">
+  <div class="container" style="max-width:100%;padding:0;">
+    <!-- Project Info + Search -->
+    <div class="project-bar">
+      <div class="form-group search-wrap">
+        <label for="projectName">Project Name / Search CoinGecko</label>
+        <input type="text" id="projectName" placeholder="e.g. Solana, Uniswap, Arbitrum..." 
+               oninput="onProjectInput(); saveState();" autocomplete="off" />
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <div class="form-group">
+        <label for="scoreDate">Date</label>
+        <input type="date" id="scoreDate" onchange="saveState()" />
+      </div>
+      <div>
+        <button class="btn btn-purple" id="loadBtn" onclick="loadLiveData()" style="height:42px; min-width:140px;">
+          ⚡ Load Live Data
+        </button>
+      </div>
+    </div>
+
+    <div class="data-status" id="dataStatus"></div>
+
+    <!-- Live Data Panel -->
+    <div class="live-panel" id="livePanel">
+      <div class="live-header">
+        <h3>
+          <span id="liveCoinIcon">⚡</span>
+          <span id="liveCoinName">—</span>
+          <span style="font-weight:400;opacity:0.85;font-size:0.85rem;" id="liveSymbol"></span>
+        </h3>
+        <div class="live-meta" id="liveMeta">Data from CoinGecko + DefiLlama</div>
+      </div>
+      <div class="live-body" id="liveBody">
+        <!-- filled by JS -->
+      </div>
+      <div class="live-links" id="liveLinks"></div>
+    </div>
+
+    <!-- Step Tabs -->
+    <div class="step-nav">
+      <div class="step-tab active" data-step="1" onclick="goToStep(1)">
+        <span class="step-num">STEP 1</span>
+        Community
+        <span class="step-score" id="tabScore1">— / 10</span>
+      </div>
+      <div class="step-tab" data-step="2" onclick="goToStep(2)">
+        <span class="step-num">STEP 2</span>
+        Opportunity
+        <span class="step-score" id="tabScore2">— / 10</span>
+      </div>
+      <div class="step-tab" data-step="3" onclick="goToStep(3)">
+        <span class="step-num">STEP 3</span>
+        Risk
+        <span class="step-score" id="tabScore3">— / 10</span>
+      </div>
+      <div class="step-tab" data-step="4" onclick="goToStep(4)">
+        <span class="step-num">STEP 4</span>
+        Economics
+        <span class="step-score" id="tabScore4">— / 10</span>
+      </div>
+      <div class="step-tab" data-step="5" onclick="goToStep(5)">
+        <span class="step-num">FINAL</span>
+        Summary
+        <span class="step-score" id="tabScore5">— / 40</span>
+      </div>
+      <div class="step-tab" data-step="6" onclick="goToStep(6)">
+        <span class="step-num">COMPARE</span>
+        Projects
+        <span class="step-score" id="tabScore6">vs</span>
+      </div>
+    </div>
+
+    <!-- ========== STEP 1 ========== -->
+    <div class="step-panel active" id="step1">
+      <div class="card">
+        <div class="card-header blue">
+          <div class="card-header-icon">👥</div>
+          <div>
+            <h2>STEP 1: Community & Adoption</h2>
+            <p>Evaluate how active and engaged the project's community and ecosystem are.</p>
+          </div>
+        </div>
+        <div class="card-body" id="criteria1"></div>
+        <div class="score-footer">
+          <div class="score-box">
+            <div class="label">Community Score</div>
+            <div class="value"><span id="score1">0</span> <span>/ 10</span></div>
+          </div>
+          <div class="why-box">
+            <label>Why this score?</label>
+            <textarea id="why1" placeholder="Summarize findings... Use live data above as evidence." oninput="saveState()"></textarea>
+          </div>
+        </div>
+        <div class="scoring-guide">
+          <span><strong>2 pts</strong> = Strong evidence</span>
+          <span><strong>1 pt</strong> = Mixed evidence</span>
+          <span><strong>0 pts</strong> = Weak evidence or concerns</span>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <div></div>
+        <button class="btn btn-primary" onclick="goToStep(2)">Next: Opportunity →</button>
+      </div>
+    </div>
+
+    <!-- ========== STEP 2 ========== -->
+    <div class="step-panel" id="step2">
+      <div class="card">
+        <div class="card-header blue">
+          <div class="card-header-icon">🎯</div>
+          <div>
+            <h2>STEP 2: Opportunity</h2>
+            <p>Evaluate the market opportunity and competitive landscape.</p>
+          </div>
+        </div>
+        <div class="card-body" id="criteria2"></div>
+        <div class="score-footer">
+          <div class="score-box">
+            <div class="label">Opportunity Score</div>
+            <div class="value"><span id="score2">0</span> <span>/ 10</span></div>
+          </div>
+          <div class="why-box">
+            <label>Why this score?</label>
+            <textarea id="why2" placeholder="Summarize findings..." oninput="saveState()"></textarea>
+          </div>
+        </div>
+        <div class="scoring-guide">
+          <span><strong>2 pts</strong> = Strong evidence</span>
+          <span><strong>1 pt</strong> = Mixed evidence</span>
+          <span><strong>0 pts</strong> = Weak evidence or concerns</span>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-ghost" onclick="goToStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">Next: Risk →</button>
+      </div>
+    </div>
+
+    <!-- ========== STEP 3 ========== -->
+    <div class="step-panel" id="step3">
+      <div class="card">
+        <div class="card-header blue">
+          <div class="card-header-icon">🛡️</div>
+          <div>
+            <h2>STEP 3: Risk</h2>
+            <p>Evaluate key risks. <em>Higher scores = Lower overall risk.</em></p>
+          </div>
+        </div>
+        <div class="card-body" id="criteria3"></div>
+        <div class="score-footer">
+          <div class="score-box">
+            <div class="label">Risk Score</div>
+            <div class="value"><span id="score3">0</span> <span>/ 10</span></div>
+            <div style="font-size:0.68rem;color:var(--gray-600);margin-top:0.15rem;">Higher = Lower risk</div>
+          </div>
+          <div class="why-box">
+            <label>Why this score?</label>
+            <textarea id="why3" placeholder="Summarize findings..." oninput="saveState()"></textarea>
+          </div>
+        </div>
+        <div class="scoring-guide">
+          <span><strong>2 pts</strong> = Strong evidence (Low risk)</span>
+          <span><strong>1 pt</strong> = Mixed / Some concerns</span>
+          <span><strong>0 pts</strong> = High risk or significant concerns</span>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-ghost" onclick="goToStep(2)">← Back</button>
+        <button class="btn btn-primary" onclick="goToStep(4)">Next: Economics →</button>
+      </div>
+    </div>
+
+    <!-- ========== STEP 4 ========== -->
+    <div class="step-panel step-econ" id="step4">
+      <div class="card">
+        <div class="card-header green">
+          <div class="card-header-icon">📈</div>
+          <div>
+            <h2>STEP 4: Economics</h2>
+            <p>Evaluate the token economics and long-term sustainability.</p>
+          </div>
+        </div>
+        <div class="card-body" id="criteria4"></div>
+        <div class="score-footer">
+          <div class="score-box">
+            <div class="label">Economics Score</div>
+            <div class="value"><span id="score4">0</span> <span>/ 10</span></div>
+          </div>
+          <div class="why-box">
+            <label>Why this score?</label>
+            <textarea id="why4" placeholder="Summarize findings..." oninput="saveState()"></textarea>
+          </div>
+        </div>
+        <div class="scoring-guide">
+          <span><strong>2 pts</strong> = Strong evidence / Clear data</span>
+          <span><strong>1 pt</strong> = Mixed / Incomplete evidence</span>
+          <span><strong>0 pts</strong> = Weak evidence or concerns</span>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button class="btn btn-ghost" onclick="goToStep(3)">← Back</button>
+        <button class="btn btn-success" onclick="goToStep(5)">View Final Scorecard →</button>
+      </div>
+    </div>
+
+    <!-- ========== FINAL ========== -->
+    <div class="step-panel" id="step5">
+      <div class="card">
+        <div class="card-header dark">
+          <div class="card-header-icon">✅</div>
+          <div>
+            <h2>Final CORE Due Diligence Scorecard</h2>
+            <p>Summary of findings across all 4 CORE steps.</p>
+          </div>
+        </div>
+        <div class="final-grid">
+          <table class="final-table">
+            <thead>
+              <tr>
+                <th>Step</th>
+                <th>Focus Area</th>
+                <th>Description</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>Community & Adoption</strong></td>
+                <td>How active and engaged the community & ecosystem are</td>
+                <td><span class="score-pill" id="finalScore1">0 / 10</span></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><strong>Opportunity</strong></td>
+                <td>Market opportunity and competitive landscape</td>
+                <td><span class="score-pill" id="finalScore2">0 / 10</span></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><strong>Risk</strong></td>
+                <td>Key risks (↑ score = lower risk)</td>
+                <td><span class="score-pill" id="finalScore3">0 / 10</span></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td><strong>Economics</strong></td>
+                <td>Token economics and long-term sustainability</td>
+                <td><span class="score-pill" id="finalScore4">0 / 10</span></td>
+              </tr>
+              <tr class="total-row">
+                <td colspan="3" style="text-align:right;">TOTAL SCORE</td>
+                <td><span class="score-pill" id="finalTotal" style="background:#0b3d91;color:white;">0 / 40</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="final-summary-box">
+            <div class="final-score-big">
+              <div class="label">Final Score</div>
+              <div class="value" id="bigScore">0</div>
+              <div class="max">/ 40</div>
+            </div>
+            <div class="summary-text">
+              <label>Summary & Overall Assessment</label>
+              <textarea id="finalSummary" placeholder="Key strengths, concerns, and final thoughts..." oninput="saveState()"></textarea>
+            </div>
+            <div class="rating-box">
+              <div class="label">Overall Rating</div>
+              <div id="ratingBadge" class="rating-badge rating-very-weak">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rating-legend">
+          <div class="legend-item strong">
+            <strong>32 – 40 · STRONG</strong>
+            High-quality project with strong fundamentals and high potential.
+          </div>
+          <div class="legend-item moderate">
+            <strong>24 – 31 · MODERATE</strong>
+            Promising project with some risks. Proceed with caution.
+          </div>
+          <div class="legend-item weak">
+            <strong>16 – 23 · WEAK</strong>
+            High risk or significant concerns. Limited long-term viability evidence.
+          </div>
+          <div class="legend-item very-weak">
+            <strong>0 – 15 · VERY WEAK</strong>
+            Very high risk. Consider avoiding or waiting for improvements.
+          </div>
+        </div>
+      </div>
+
+      <!-- Red Flags Checklist -->
+      <div class="card" style="margin-top:1.25rem;">
+        <div class="card-header" style="background:color-mix(in srgb, #dc2626 12%, var(--surface));border-bottom:1px solid var(--border);">
+          <div class="card-header-icon">🚩</div>
+          <div>
+            <h2 style="color:var(--text);">Red Flags Checklist</h2>
+            <p style="color:var(--text-muted);">Manually check any concerns you discover during research. These do not auto-score — they are a research aid.</p>
+          </div>
+        </div>
+        <div style="padding:1.1rem 1.25rem;" id="redFlagsList">
+          <!-- filled by JS -->
+        </div>
+        <div style="padding:0 1.25rem 1.1rem;font-size:0.8rem;color:var(--text-muted);" id="redFlagsSummary"></div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-ghost" onclick="goToStep(4)">← Back</button>
+        <button class="btn btn-primary" onclick="window.print()">Print Scorecard</button>
+      </div>
+    </div>
+
+    <!-- ========== COMPARE MODE ========== -->
+    <div class="step-panel" id="step6">
+      <div class="compare-controls">
+        <h3>Select 2–4 projects to compare</h3>
+        <div class="compare-select-grid" id="compareSelectGrid">
+          <!-- chips filled by JS -->
+        </div>
+        <div class="compare-actions">
+          <button class="btn btn-primary" onclick="runComparison()" id="runCompareBtn">Run Comparison</button>
+          <button class="btn btn-ghost" onclick="clearComparison()">Clear</button>
+          <span id="compareStatus" style="font-size:0.82rem;color:var(--text-muted);"></span>
+        </div>
+      </div>
+
+      <div id="compareResults">
+        <div class="compare-empty">
+          <h3>Competitor Comparison</h3>
+          <p>Select at least 2 projects from your portfolio above, then click <strong>Run Comparison</strong>.<br>
+          You’ll see live metrics + CORE scores side-by-side with best values highlighted.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="disclaimer" style="margin:1.5rem 0 2rem;padding:0.9rem 1.1rem;border:1px solid var(--border);border-radius:10px;background:var(--surface-2);font-size:0.78rem;color:var(--text-muted);line-height:1.5;">
+      <strong style="color:var(--text);">Disclaimer:</strong> This tool is for educational and research purposes only. It does not constitute financial, investment, or trading advice. You are solely responsible for your own investment decisions. Always do your own research and consider consulting a qualified professional.
+    </div>
+
+  </div><!-- end container -->
+    </div><!-- end main-content -->
+  </div><!-- end layout -->
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ========== CRITERIA DATA ==========
+    const CRITERIA = {
+      1: [
+        { id: "c1_1", icon: "👥", title: "Active users are growing", desc: "Is the number of active users increasing over time?", liveKey: "community" },
+        { id: "c1_2", icon: "</>", title: "Developer activity is consistent", desc: "Is the project seeing regular development and code commits?", liveKey: "dev" },
+        { id: "c1_3", icon: "📊", title: "Ecosystem is expanding", desc: "Are new dApps, services, or partners joining the ecosystem?", liveKey: "tvl" },
+        { id: "c1_4", icon: "💬", title: "Community discusses more than price", desc: "Is the community engaged in meaningful discussions beyond price speculation?", liveKey: "community" },
+        { id: "c1_5", icon: "🔗", title: "On-chain activity supports adoption", desc: "Do on-chain metrics show real usage and network activity?", liveKey: "onchain" }
+      ],
+      2: [
+        { id: "c2_1", icon: "💡", title: "Solves a meaningful problem", desc: "Does the project address a real and important problem?", liveKey: null },
+        { id: "c2_2", icon: "👥", title: "Large addressable market", desc: "Is the potential market size large enough to support long-term growth?", liveKey: "market" },
+        { id: "c2_3", icon: "🔗", title: "Blockchain provides real value", desc: "Does blockchain technology offer a meaningful advantage over traditional solutions?", liveKey: null },
+        { id: "c2_4", icon: "⭐", title: "Competitive advantage", desc: "Does the project have a defensible edge over current and future competitors?", liveKey: null },
+        { id: "c2_5", icon: "📈", title: "Long-term growth potential", desc: "Does the project have strong potential for sustained growth over time?", liveKey: "market" }
+      ],
+      3: [
+        { id: "c3_1", icon: "🔒", title: "Strong security record", desc: "Does the project have a solid security history with no major hacks or incidents?", liveKey: null },
+        { id: "c3_2", icon: "🕸️", title: "Decentralized network", desc: "Is the network sufficiently decentralized with no single point of control?", liveKey: null },
+        { id: "c3_3", icon: "⚖️", title: "Regulatory resilience", desc: "Can the project adapt to or navigate regulatory changes?", liveKey: null },
+        { id: "c3_4", icon: "👥", title: "Proven execution", desc: "Has the team demonstrated the ability to deliver on roadmap and commitments?", liveKey: "dev" },
+        { id: "c3_5", icon: "⏱️", title: "Healthy token distribution", desc: "Is token ownership fairly distributed with no excessive concentration?", liveKey: null }
+      ],
+      4: [
+        { id: "c4_1", icon: "💰", title: "Sustainable tokenomics", desc: "Is the overall token model designed to create long-term value?", liveKey: "market" },
+        { id: "c4_2", icon: "🔄", title: "Reasonable inflation / emissions", desc: "Is the inflation or emission rate controlled and sustainable?", liveKey: null },
+        { id: "c4_3", icon: "⚙️", title: "Token has real utility", desc: "Does the token provide essential utility within the ecosystem?", liveKey: "tvl" },
+        { id: "c4_4", icon: "🔓", title: "Healthy unlock schedule", desc: "Are future token unlocks reasonable and well-structured?", liveKey: null },
+        { id: "c4_5", icon: "🤝", title: "Long-term incentive alignment", desc: "Do token incentives align with the success of the project and its long-term holders?", liveKey: null }
+      ]
+    };
+
+    let currentStep = 1;
+    let scores = {};
+    let liveData = null;
+    let llamaData = null;
+    let selectedGeckoId = null;
+    let searchTimeout = null;
+    let redFlags = {}; // id -> boolean
+
+    // Common red flags users can manually check during research
+    const RED_FLAGS = [
+      { id: "rf_anon_team", label: "Anonymous or poorly verified team" },
+      { id: "rf_unlocks", label: "Large token unlocks in the next 6–12 months" },
+      { id: "rf_liquidity", label: "Low liquidity or high ownership concentration" },
+      { id: "rf_hacks", label: "History of hacks, exploits, or major security issues" },
+      { id: "rf_marketing", label: "Heavy paid marketing / influencer shilling" },
+      { id: "rf_tokenomics", label: "Unclear, changing, or poorly designed tokenomics" },
+      { id: "rf_no_product", label: "Little or no real product / usage" },
+      { id: "rf_regulatory", label: "Significant regulatory or legal risk" },
+      { id: "rf_centralization", label: "High centralization (validators, admin keys, etc.)" },
+      { id: "rf_promises", label: "Unrealistic promises or roadmaps that keep slipping" }
+    ];
+
+    // Portfolio state
+    let portfolio = [];           // array of project objects
+    let currentProjectId = null;  // id of active project
+
+    function generateId() {
+      return "p_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    }
+
+    // ========== THEME ==========
+    function initTheme() {
+      const saved = localStorage.getItem("coreTheme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = saved || (prefersDark ? "dark" : "light");
+      setTheme(theme);
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("coreTheme", theme);
+      const btn = document.getElementById("themeToggle");
+      if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme") || "light";
+      setTheme(current === "dark" ? "light" : "dark");
+    }
+
+    // ========== INIT ==========
+    function init() {
+      initTheme();
+      document.getElementById("scoreDate").value = new Date().toISOString().split("T")[0];
+      for (let s = 1; s <= 4; s++) renderCriteria(s);
+
+      loadPortfolio();
+      if (portfolio.length === 0) {
+        createNewProject(true); // silent first project
+      } else {
+        // Load the most recently modified project
+        const sorted = [...portfolio].sort((a, b) => (b.lastModified || 0) - (a.lastModified || 0));
+        switchToProject(sorted[0].id, true);
+      }
+
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".search-wrap")) {
+          document.getElementById("searchResults").classList.remove("show");
+        }
+      });
+
+      // Show close button on mobile
+      if (window.innerWidth <= 900) {
+        document.getElementById("closeSidebarBtn").style.display = "inline-flex";
+      }
+    }
+
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("open");
+    }
+
+    // ========== SEARCH ==========
+    function onProjectInput() {
+      clearTimeout(searchTimeout);
+      const q = document.getElementById("projectName").value.trim();
+      if (q.length < 2) {
+        document.getElementById("searchResults").classList.remove("show");
+        return;
+      }
+      searchTimeout = setTimeout(() => searchCoins(q), 350);
+    }
+
+    async function searchCoins(query) {
+      const box = document.getElementById("searchResults");
+      box.innerHTML = `<div class="search-item" style="color:var(--gray-600)">Searching...</div>`;
+      box.classList.add("show");
+
+      try {
+        const res = await fetch(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error("Search failed");
+        const data = await res.json();
+        const coins = (data.coins || []).slice(0, 8);
+
+        if (coins.length === 0) {
+          box.innerHTML = `<div class="search-item" style="color:var(--gray-600)">No results</div>`;
+          return;
+        }
+
+        box.innerHTML = coins.map(c => `
+          <div class="search-item" onclick="selectCoin('${c.id}', '${escapeHtml(c.name)}', '${c.symbol}')">
+            <img src="${c.thumb}" alt="" onerror="this.style.display='none'" />
+            <div style="flex:1">
+              <strong>${escapeHtml(c.name)}</strong>
+              <span style="color:var(--gray-600);margin-left:0.4rem">${c.symbol?.toUpperCase()}</span>
+            </div>
+            <span class="rank">#${c.market_cap_rank || "—"}</span>
+          </div>
+        `).join("");
+      } catch (err) {
+        box.innerHTML = `<div class="search-item" style="color:var(--red)">Search error (CORS/rate limit). Type ID and click Load.</div>`;
+      }
+    }
+
+    function selectCoin(id, name, symbol) {
+      selectedGeckoId = id;
+      document.getElementById("projectName").value = name;
+      document.getElementById("searchResults").classList.remove("show");
+      saveState();
+      loadLiveData();
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+
+    // ========== LOAD LIVE DATA ==========
+    async function loadLiveData() {
+      const status = document.getElementById("dataStatus");
+      const btn = document.getElementById("loadBtn");
+      const nameOrId = document.getElementById("projectName").value.trim();
+
+      if (!nameOrId && !selectedGeckoId) {
+        showStatus("Enter a project name or select from search first.", "error");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner"></span> Loading...`;
+      showStatus("Fetching live data from CoinGecko & DefiLlama...", "loading");
+
+      try {
+        let geckoId = selectedGeckoId;
+        if (!geckoId) {
+          const searchRes = await fetch(`https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(nameOrId)}`);
+          if (searchRes.ok) {
+            const sdata = await searchRes.json();
+            if (sdata.coins && sdata.coins.length > 0) {
+              geckoId = sdata.coins[0].id;
+              selectedGeckoId = geckoId;
+            }
+          }
+        }
+
+        if (!geckoId) throw new Error("Could not resolve CoinGecko ID. Select from the dropdown.");
+
+        const coinRes = await fetch(
+          `https://api.coingecko.com/api/v3/coins/${geckoId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`
+        );
+        if (!coinRes.ok) {
+          if (coinRes.status === 429) throw new Error("Rate limited by CoinGecko. Wait a minute and try again.");
+          throw new Error(`CoinGecko error ${coinRes.status}`);
+        }
+        liveData = await coinRes.json();
+
+        // DefiLlama
+        llamaData = null;
+        try {
+          const protoRes = await fetch("https://api.llama.fi/protocols");
+          if (protoRes.ok) {
+            const protos = await protoRes.json();
+            llamaData = protos.find(p => 
+              (p.gecko_id && p.gecko_id === geckoId) ||
+              (p.name && p.name.toLowerCase() === (liveData.name || "").toLowerCase()) ||
+              (p.slug && p.slug === geckoId)
+            ) || null;
+          }
+        } catch (e) {
+          console.warn("DefiLlama fetch failed", e);
+        }
+
+        renderLivePanel();
+        for (let s = 1; s <= 4; s++) renderCriteria(s);
+        showStatus(`Loaded live data for ${liveData.name} (${(liveData.symbol || "").toUpperCase()})`, "ok");
+        showToast("Live data loaded");
+        saveState();
+      } catch (err) {
+        console.error(err);
+        showStatus(`Failed: ${err.message}. You can still score manually.`, "error");
+        liveData = null;
+        llamaData = null;
+        document.getElementById("livePanel").classList.remove("visible");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = "⚡ Load Live Data";
+      }
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById("dataStatus");
+      el.textContent = msg;
+      el.className = "data-status " + (type || "");
+      el.style.display = "block";
+      if (type === "ok") setTimeout(() => { el.style.display = "none"; }, 4500);
+    }
+
+    function renderLivePanel() {
+      if (!liveData) return;
+      const panel = document.getElementById("livePanel");
+      panel.classList.add("visible");
+
+      document.getElementById("liveCoinName").textContent = liveData.name;
+      document.getElementById("liveSymbol").textContent = liveData.symbol ? `(${liveData.symbol.toUpperCase()})` : "";
+      document.getElementById("liveCoinIcon").innerHTML = liveData.image?.thumb 
+        ? `<img src="${liveData.image.thumb}" style="width:22px;height:22px;border-radius:50%;vertical-align:middle">` 
+        : "⚡";
+
+      const md = liveData.market_data || {};
+      const cd = liveData.community_data || {};
+      const dd = liveData.developer_data || {};
+
+      const fmt = (n) => {
+        if (n == null || isNaN(n)) return "—";
+        if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+        if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+        if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+        return Number(n).toLocaleString();
+      };
+
+      const price = md.current_price?.usd;
+      const mcap = md.market_cap?.usd;
+      const vol = md.total_volume?.usd;
+      const chg24 = md.price_change_percentage_24h;
+
+      let html = `
+        <div class="metric-card highlight">
+          <div class="label">Price (USD)</div>
+          <div class="value">$${price != null ? Number(price).toLocaleString(undefined,{maximumFractionDigits:6}) : "—"}</div>
+          <div class="sub">${chg24 != null ? (chg24 >= 0 ? "▲" : "▼") + " " + Math.abs(chg24).toFixed(2) + "% 24h" : ""}</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Market Cap</div>
+          <div class="value">$${fmt(mcap)}</div>
+          <div class="sub">Rank #${liveData.market_cap_rank || "—"}</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">24h Volume</div>
+          <div class="value">$${fmt(vol)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Twitter Followers</div>
+          <div class="value">${fmt(cd.twitter_followers)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Reddit Subscribers</div>
+          <div class="value">${fmt(cd.reddit_subscribers)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">Telegram Users</div>
+          <div class="value">${fmt(cd.telegram_channel_user_count)}</div>
+        </div>
+        <div class="metric-card highlight">
+          <div class="label">GitHub Commits (4 weeks)</div>
+          <div class="value">${dd.commit_count_4_weeks ?? "—"}</div>
+          <div class="sub">Stars: ${fmt(dd.stars)} · Forks: ${fmt(dd.forks)}</div>
+        </div>
+        <div class="metric-card">
+          <div class="label">PRs Merged / Contributors</div>
+          <div class="value">${fmt(dd.pull_requests_merged)}</div>
+          <div class="sub">Contributors: ${fmt(dd.pull_request_contributors)}</div>
+        </div>
+      `;
+
+      if (llamaData) {
+        html += `
+          <div class="metric-card highlight">
+            <div class="label">DefiLlama TVL</div>
+            <div class="value">$${fmt(llamaData.tvl)}</div>
+            <div class="sub">${llamaData.category || "Protocol"} · ${llamaData.chains?.length || 0} chains</div>
+          </div>
+          <div class="metric-card">
+            <div class="label">TVL Change (1d / 7d)</div>
+            <div class="value">${llamaData.change_1d != null ? (llamaData.change_1d >= 0 ? "+" : "") + llamaData.change_1d.toFixed(1) + "%" : "—"}</div>
+            <div class="sub">7d: ${llamaData.change_7d != null ? (llamaData.change_7d >= 0 ? "+" : "") + llamaData.change_7d.toFixed(1) + "%" : "—"}</div>
+          </div>
+        `;
+      }
+
+      document.getElementById("liveBody").innerHTML = html;
+
+      // Quick Research Links
+      const L = liveData.links || {};
+      const name = encodeURIComponent(liveData.name || "");
+      const symbol = (liveData.symbol || "").toUpperCase();
+      let links = [];
+
+      if (L.homepage?.[0]) links.push(`<a href="${L.homepage[0]}" target="_blank" rel="noopener">🌐 Website</a>`);
+      if (L.repos_url?.github?.[0]) links.push(`<a href="${L.repos_url.github[0]}" target="_blank" rel="noopener">💻 GitHub</a>`);
+      if (L.official_forum_url?.[0]) links.push(`<a href="${L.official_forum_url[0]}" target="_blank" rel="noopener">Forum</a>`);
+      if (L.chat_url?.[0]) links.push(`<a href="${L.chat_url[0]}" target="_blank" rel="noopener">Chat</a>`);
+      if (L.twitter_screen_name) links.push(`<a href="https://twitter.com/${L.twitter_screen_name}" target="_blank" rel="noopener">𝕏 Twitter</a>`);
+      if (L.subreddit_url) links.push(`<a href="${L.subreddit_url}" target="_blank" rel="noopener">Reddit</a>`);
+      if (L.telegram_channel_identifier) links.push(`<a href="https://t.me/${L.telegram_channel_identifier}" target="_blank" rel="noopener">Telegram</a>`);
+      if (L.whitepaper) links.push(`<a href="${L.whitepaper}" target="_blank" rel="noopener">Whitepaper</a>`);
+
+      links.push(`<a href="https://www.coingecko.com/en/coins/${selectedGeckoId}" target="_blank" rel="noopener">CoinGecko</a>`);
+      if (llamaData?.slug) links.push(`<a href="https://defillama.com/protocol/${llamaData.slug}" target="_blank" rel="noopener">DefiLlama</a>`);
+      links.push(`<a href="https://token.unlocks.app/" target="_blank" rel="noopener">TokenUnlocks</a>`);
+      links.push(`<a href="https://www.google.com/search?q=${name}+crypto+review" target="_blank" rel="noopener">Google Reviews</a>`);
+      links.push(`<a href="https://twitter.com/search?q=${symbol}%20OR%20${name}&src=typed_query&f=live" target="_blank" rel="noopener">Recent 𝕏 Posts</a>`);
+
+      document.getElementById("liveLinks").innerHTML = `
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted);margin-bottom:0.4rem;">Quick Research Links</div>
+        <div style="display:flex;flex-wrap:wrap;gap:0.45rem 0.9rem;">${links.join("")}</div>`;
+      document.getElementById("liveMeta").textContent = `Updated ${new Date().toLocaleString()} · CoinGecko + DefiLlama`;
+    }
+
+    function getLiveHint(liveKey) {
+      if (!liveData) return "";
+      const md = liveData.market_data || {};
+      const cd = liveData.community_data || {};
+      const dd = liveData.developer_data || {};
+      const fmt = (n) => n == null ? "—" : (n >= 1e6 ? (n/1e6).toFixed(1)+"M" : n >= 1e3 ? (n/1e3).toFixed(1)+"K" : n.toLocaleString());
+
+      if (liveKey === "dev") {
+        const commits = dd.commit_count_4_weeks;
+        if (commits == null) return "";
+        return `<div class="live-hint">⚡ Live: <strong>${commits}</strong> commits (4w) · ${fmt(dd.stars)} stars</div>`;
+      }
+      if (liveKey === "community") {
+        const tw = cd.twitter_followers;
+        const rd = cd.reddit_subscribers;
+        if (!tw && !rd) return "";
+        return `<div class="live-hint">⚡ Live: Twitter ${fmt(tw)} · Reddit ${fmt(rd)}</div>`;
+      }
+      if (liveKey === "market") {
+        const mcap = md.market_cap?.usd;
+        if (!mcap) return "";
+        return `<div class="live-hint">⚡ Live: MCap $${fmt(mcap)} · Rank #${liveData.market_cap_rank || "—"}</div>`;
+      }
+      if (liveKey === "onchain" || liveKey === "tvl") {
+        if (llamaData && llamaData.tvl) {
+          return `<div class="live-hint">⚡ Live: TVL $${fmt(llamaData.tvl)} (${llamaData.change_7d != null ? (llamaData.change_7d>=0?"+":"")+llamaData.change_7d.toFixed(1)+"% 7d" : ""})</div>`;
+        }
+        const vol = md.total_volume?.usd;
+        if (vol) return `<div class="live-hint">⚡ Live: 24h Vol $${fmt(vol)}</div>`;
+      }
+      return "";
+    }
+
+    // ========== RECOMMENDED SCORES ==========
+    // Strict heuristics — only score when live data is a solid, relevant signal.
+    // Prefer returning null (manual judgment) over weak guesses.
+    function getRecommendation(criterionId) {
+      if (!liveData) return null;
+
+      const md = liveData.market_data || {};
+      const cd = liveData.community_data || {};
+      const dd = liveData.developer_data || {};
+      const rank = liveData.market_cap_rank;
+      const mcap = md.market_cap?.usd || 0;
+      const vol = md.total_volume?.usd || 0;
+      const commits = dd.commit_count_4_weeks;
+      const twitter = cd.twitter_followers || 0;
+      const reddit = cd.reddit_subscribers || 0;
+      const tvl = llamaData?.tvl || 0;
+      const tvlChange7d = llamaData?.change_7d;
+
+      const hasDevData = commits != null;
+
+      switch (criterionId) {
+        // --- STEP 1: Community & Adoption ---
+        case "c1_1": // Active users are growing
+          // Only score when we have a clear growth or strong activity signal
+          if (tvl > 100e6 && tvlChange7d != null && tvlChange7d > 5) {
+            return { score: 2, reason: "TVL rising strongly (+" + tvlChange7d.toFixed(1) + "% 7d)" };
+          }
+          if (tvl > 50e6 && tvlChange7d != null && tvlChange7d > 0) {
+            return { score: 1, reason: "Positive TVL trend (+" + tvlChange7d.toFixed(1) + "% 7d)" };
+          }
+          // High absolute volume is a weak proxy — only give 1 if very high
+          if (vol > 200e6) return { score: 1, reason: "Very high 24h volume suggests active usage" };
+          return null; // No reliable growth signal
+
+        case "c1_2": // Developer activity is consistent
+          if (!hasDevData) return null;
+          if (commits >= 60) return { score: 2, reason: commits + " commits in 4 weeks (very active)" };
+          if (commits >= 20) return { score: 2, reason: commits + " commits in 4 weeks" };
+          if (commits >= 8)  return { score: 1, reason: commits + " commits in 4 weeks (moderate)" };
+          if (commits > 0)   return { score: 0, reason: "Only " + commits + " commits in 4 weeks — low activity" };
+          return { score: 0, reason: "No recent commits detected" };
+
+        case "c1_3": // Ecosystem is expanding
+          // TVL is the best available proxy for ecosystem size
+          if (tvl > 500e6) return { score: 2, reason: "Large TVL ($" + (tvl/1e9).toFixed(2) + "B) indicates broad ecosystem" };
+          if (tvl > 80e6)  return { score: 1, reason: "Meaningful TVL ($" + (tvl/1e6).toFixed(0) + "M)" };
+          // Rank alone is a weak proxy — only use for very high ranks
+          if (rank && rank <= 15) return { score: 1, reason: "Top-15 market rank implies established ecosystem" };
+          return null;
+
+        case "c1_4": // Community discusses more than price
+          // Size is only a rough proxy; we never claim "discusses more than price" without direct data
+          if (twitter >= 250000 || reddit >= 100000) return { score: 2, reason: "Very large community size" };
+          if (twitter >= 80000  || reddit >= 25000)  return { score: 1, reason: "Solid community size" };
+          if (twitter > 0 || reddit > 0) {
+            // Small communities often more price-focused — score 0 only if tiny
+            if (twitter < 5000 && reddit < 2000) return { score: 0, reason: "Very small tracked social footprint" };
+          }
+          return null; // No strong signal either way
+
+        case "c1_5": // On-chain activity supports adoption
+          if (tvl > 300e6) return { score: 2, reason: "Strong TVL ($" + (tvl/1e6).toFixed(0) + "M)" };
+          if (tvl > 50e6)  return { score: 1, reason: "Notable TVL ($" + (tvl/1e6).toFixed(0) + "M)" };
+          if (vol > 100e6 && mcap > 0) {
+            const ratio = vol / mcap;
+            if (ratio > 0.12) return { score: 2, reason: "Very high volume/mcap ratio (" + (ratio*100).toFixed(1) + "%)" };
+            if (ratio > 0.05) return { score: 1, reason: "Healthy volume relative to mcap" };
+          }
+          return null;
+
+        // --- STEP 2: Opportunity ---
+        // These are mostly qualitative. Only score when market position is a clear proxy.
+        case "c2_1": // Solves a meaningful problem
+          // Cannot reliably judge from market data alone
+          return null;
+
+        case "c2_2": // Large addressable market
+          if (rank && rank <= 20) return { score: 2, reason: "Top-20 market cap rank" };
+          if (mcap >= 1e9) return { score: 2, reason: "Market cap > $1B" };
+          if (rank && rank <= 50) return { score: 1, reason: "Rank #" + rank };
+          if (mcap >= 200e6) return { score: 1, reason: "Market cap > $200M" };
+          return null;
+
+        case "c2_3": // Blockchain provides real value
+          // Best proxy is real usage (TVL)
+          if (tvl > 100e6) return { score: 2, reason: "Significant TVL indicates real on-chain value" };
+          if (tvl > 20e6)  return { score: 1, reason: "Some TVL present" };
+          return null;
+
+        case "c2_4": // Competitive advantage
+          // Hard to judge from public metrics alone
+          return null;
+
+        case "c2_5": // Long-term growth potential
+          if (rank && rank <= 25 && hasDevData && commits >= 25) {
+            return { score: 2, reason: "Top-25 rank + strong recent development" };
+          }
+          if (rank && rank <= 40 && hasDevData && commits >= 15) {
+            return { score: 1, reason: "Solid rank + ongoing development" };
+          }
+          return null;
+
+        // --- STEP 3: Risk ---
+        // Most risk criteria require qualitative knowledge. Stay strict.
+        case "c3_1": // Strong security record
+          // We do not have reliable public hack/audit data in the current feed
+          return null;
+
+        case "c3_2": // Decentralized network
+          // Cannot accurately score decentralization from rank/TVL
+          return null;
+
+        case "c3_3": // Regulatory resilience
+          return null;
+
+        case "c3_4": // Proven execution
+          if (!hasDevData) return null;
+          if (commits >= 40) return { score: 2, reason: "Strong ongoing development (" + commits + " commits / 4w)" };
+          if (commits >= 12) return { score: 1, reason: "Consistent recent commits (" + commits + " / 4w)" };
+          if (commits > 0)   return { score: 0, reason: "Low recent development activity" };
+          return { score: 0, reason: "No recent development activity detected" };
+
+        case "c3_5": // Healthy token distribution
+          // No reliable distribution data in current feeds
+          return null;
+
+        // --- STEP 4: Economics ---
+        case "c4_1": // Sustainable tokenomics
+          // Only score when TVL/mcap ratio gives a real signal
+          if (tvl > 100e6 && mcap > 0) {
+            const ratio = tvl / mcap;
+            if (ratio > 0.25) return { score: 2, reason: "TVL is healthy vs market cap (" + (ratio*100).toFixed(0) + "%)" };
+            if (ratio > 0.08) return { score: 1, reason: "Reasonable TVL vs market cap" };
+          }
+          return null; // Rank/size alone is not enough for tokenomics quality
+
+        case "c4_2": // Inflation / emissions controlled
+          // No reliable emissions data in current feeds
+          return null;
+
+        case "c4_3": // Token has real utility
+          if (tvl > 80e6) return { score: 2, reason: "Meaningful TVL indicates real usage/utility" };
+          if (tvl > 15e6) return { score: 1, reason: "Some TVL present ($" + (tvl/1e6).toFixed(0) + "M)" };
+          return null; // Volume or rank alone is not strong enough evidence of utility
+
+        case "c4_4": // Clear value accrual
+          return null;
+
+        case "c4_5": // Long-term incentive alignment
+          // Cannot reliably judge incentive design from public market data
+          return null;
+
+        default:
+          return null;
+      }
+    }
+
+    // ========== RENDER CRITERIA ==========
+    function renderCriteria(step) {
+      const container = document.getElementById(`criteria${step}`);
+      container.innerHTML = "";
+
+      CRITERIA[step].forEach((c) => {
+        const hint = getLiveHint(c.liveKey);
+
+        const row = document.createElement("div");
+        row.className = "criteria-row";
+        row.innerHTML = `
+          <div class="criteria-info">
+            <div class="criteria-icon">${c.icon}</div>
+            <div class="criteria-text">
+              <h3>${c.title}</h3>
+              <p>${c.desc}</p>
+              ${hint}
+            </div>
+          </div>
+          <div class="score-options">
+            ${[0, 1, 2].map(v => `
+              <div class="score-option">
+                <input type="radio" name="${c.id}" id="${c.id}_${v}" value="${v}"
+                       onchange="setScore('${c.id}', ${v})" ${scores[c.id] === v ? "checked" : ""}>
+                <label for="${c.id}_${v}">${v}</label>
+              </div>
+            `).join("")}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function applyRecommendation(id, value) {
+      scores[id] = value;
+      // Update the radio
+      const radio = document.getElementById(`${id}_${value}`);
+      if (radio) radio.checked = true;
+      updateAllScores();
+      saveState();
+      showToast(`Applied suggested score: ${value}`);
+    }
+
+    // ========== SCORING ==========
+    function setScore(id, value) {
+      scores[id] = value;
+      updateAllScores();
+      saveState();
+    }
+
+    function getStepScore(step) {
+      return CRITERIA[step].reduce((sum, c) => sum + (scores[c.id] ?? 0), 0);
+    }
+
+    function updateAllScores() {
+      let total = 0;
+      for (let step = 1; step <= 4; step++) {
+        const s = getStepScore(step);
+        total += s;
+        document.getElementById(`score${step}`).textContent = s;
+        document.getElementById(`tabScore${step}`).textContent = `${s} / 10`;
+        document.getElementById(`finalScore${step}`).textContent = `${s} / 10`;
+
+        const allScored = CRITERIA[step].every(c => scores[c.id] !== undefined);
+        const tab = document.querySelector(`.step-tab[data-step="${step}"]`);
+        if (allScored) tab.classList.add("completed");
+        else tab.classList.remove("completed");
+      }
+
+      document.getElementById("finalTotal").textContent = `${total} / 40`;
+      document.getElementById("bigScore").textContent = total;
+      document.getElementById("tabScore5").textContent = `${total} / 40`;
+
+      const badge = document.getElementById("ratingBadge");
+      badge.className = "rating-badge";
+      if (total >= 32) { badge.textContent = "STRONG"; badge.classList.add("rating-strong"); }
+      else if (total >= 24) { badge.textContent = "MODERATE"; badge.classList.add("rating-moderate"); }
+      else if (total >= 16) { badge.textContent = "WEAK"; badge.classList.add("rating-weak"); }
+      else { badge.textContent = "VERY WEAK"; badge.classList.add("rating-very-weak"); }
+    }
+
+    // ========== NAV ==========
+    function goToStep(step) {
+      currentStep = step;
+      document.querySelectorAll(".step-panel").forEach(p => p.classList.remove("active"));
+      document.getElementById(`step${step}`).classList.add("active");
+      document.querySelectorAll(".step-tab").forEach(t => t.classList.remove("active"));
+      document.querySelector(`.step-tab[data-step="${step}"]`).classList.add("active");
+      if (step <= 4) renderCriteria(step);
+      if (step === 5) renderRedFlags();
+      if (step === 6) renderCompareSelect();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      // Don't save currentStep=6 into project state permanently in a weird way
+      if (step <= 5) saveState();
+    }
+
+    // ========== RED FLAGS ==========
+    function renderRedFlags() {
+      const container = document.getElementById("redFlagsList");
+      if (!container) return;
+      container.innerHTML = RED_FLAGS.map(f => {
+        const checked = !!redFlags[f.id];
+        return `
+          <label class="red-flag-item ${checked ? "checked" : ""}">
+            <input type="checkbox" ${checked ? "checked" : ""} onchange="toggleRedFlag('${f.id}', this.checked)" />
+            <span class="flag-text">${f.label}</span>
+          </label>`;
+      }).join("");
+
+      const count = Object.values(redFlags).filter(Boolean).length;
+      const summary = document.getElementById("redFlagsSummary");
+      if (summary) {
+        if (count === 0) {
+          summary.textContent = "No red flags checked yet.";
+        } else if (count <= 2) {
+          summary.textContent = `${count} red flag${count > 1 ? "s" : ""} noted — review carefully.`;
+        } else {
+          summary.textContent = `${count} red flags noted — significant concerns. Proceed with high caution.`;
+        }
+      }
+    }
+
+    function toggleRedFlag(id, checked) {
+      if (checked) redFlags[id] = true;
+      else delete redFlags[id];
+      renderRedFlags();
+      saveState();
+    }
+
+    // ========== PORTFOLIO PERSISTENCE ==========
+    function getCurrentProjectState() {
+      return {
+        id: currentProjectId,
+        name: document.getElementById("projectName").value || "Untitled Project",
+        scoreDate: document.getElementById("scoreDate").value,
+        selectedGeckoId,
+        scores: { ...scores },
+        why1: document.getElementById("why1").value,
+        why2: document.getElementById("why2").value,
+        why3: document.getElementById("why3").value,
+        why4: document.getElementById("why4").value,
+        finalSummary: document.getElementById("finalSummary").value,
+        redFlags: { ...redFlags },
+        currentStep,
+        totalScore: getStepScore(1) + getStepScore(2) + getStepScore(3) + getStepScore(4),
+        lastModified: Date.now()
+      };
+    }
+
+    function saveState() {
+      if (!currentProjectId) return;
+      const state = getCurrentProjectState();
+      const idx = portfolio.findIndex(p => p.id === currentProjectId);
+      if (idx >= 0) {
+        portfolio[idx] = state;
+      } else {
+        portfolio.push(state);
+      }
+      localStorage.setItem("coreScorecardPortfolio", JSON.stringify(portfolio));
+      renderProjectList();
+    }
+
+    function loadPortfolio() {
+      try {
+        const raw = localStorage.getItem("coreScorecardPortfolio");
+        portfolio = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        portfolio = [];
+      }
+      // Migrate old single-project format if present
+      const old = localStorage.getItem("coreScorecard");
+      if (old && portfolio.length === 0) {
+        try {
+          const s = JSON.parse(old);
+          const migrated = {
+            id: generateId(),
+            name: s.projectName || "Migrated Project",
+            scoreDate: s.scoreDate || new Date().toISOString().split("T")[0],
+            selectedGeckoId: s.selectedGeckoId || null,
+            scores: s.scores || {},
+            why1: s.why1 || "",
+            why2: s.why2 || "",
+            why3: s.why3 || "",
+            why4: s.why4 || "",
+            finalSummary: s.finalSummary || "",
+            currentStep: s.currentStep || 1,
+            totalScore: 0,
+            lastModified: Date.now()
+          };
+          portfolio.push(migrated);
+          localStorage.setItem("coreScorecardPortfolio", JSON.stringify(portfolio));
+          localStorage.removeItem("coreScorecard");
+        } catch (e) {}
+      }
+      renderProjectList();
+    }
+
+    function renderProjectList() {
+      const list = document.getElementById("projectList");
+      if (!list) return;
+      if (portfolio.length === 0) {
+        list.innerHTML = `<div style="font-size:0.8rem;color:#64748b;padding:0.5rem;">No projects yet</div>`;
+        return;
+      }
+      // Sort by last modified desc
+      const sorted = [...portfolio].sort((a, b) => (b.lastModified || 0) - (a.lastModified || 0));
+      list.innerHTML = sorted.map(p => `
+        <div class="project-item ${p.id === currentProjectId ? "active" : ""}" onclick="switchToProject('${p.id}')">
+          <div class="proj-name" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
+          <div class="proj-score">${p.totalScore != null ? p.totalScore + "/40" : "—"}</div>
+          <div class="proj-actions">
+            <button onclick="event.stopPropagation(); renameProject('${p.id}')" title="Rename">✎</button>
+            <button onclick="event.stopPropagation(); deleteProject('${p.id}')" title="Delete">✕</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function createNewProject(silent = false) {
+      // Save current first
+      if (currentProjectId) saveState();
+
+      const id = generateId();
+      const proj = {
+        id,
+        name: "New Project",
+        scoreDate: new Date().toISOString().split("T")[0],
+        selectedGeckoId: null,
+        scores: {},
+        why1: "", why2: "", why3: "", why4: "",
+        finalSummary: "",
+        redFlags: {},
+        currentStep: 1,
+        totalScore: 0,
+        lastModified: Date.now()
+      };
+      portfolio.push(proj);
+      localStorage.setItem("coreScorecardPortfolio", JSON.stringify(portfolio));
+      switchToProject(id, silent);
+      if (!silent) {
+        document.getElementById("projectName").focus();
+        document.getElementById("projectName").select();
+        showToast("New project created");
+      }
+    }
+
+    function switchToProject(id, silent = false) {
+      if (currentProjectId && currentProjectId !== id) {
+        saveState(); // save outgoing project
+      }
+      const proj = portfolio.find(p => p.id === id);
+      if (!proj) return;
+
+      currentProjectId = id;
+      scores = { ...(proj.scores || {}) };
+      selectedGeckoId = proj.selectedGeckoId || null;
+      liveData = null;
+      llamaData = null;
+
+      document.getElementById("projectName").value = proj.name || "";
+      document.getElementById("scoreDate").value = proj.scoreDate || new Date().toISOString().split("T")[0];
+      document.getElementById("why1").value = proj.why1 || "";
+      document.getElementById("why2").value = proj.why2 || "";
+      document.getElementById("why3").value = proj.why3 || "";
+      document.getElementById("why4").value = proj.why4 || "";
+      document.getElementById("finalSummary").value = proj.finalSummary || "";
+      redFlags = { ...(proj.redFlags || {}) };
+      document.getElementById("livePanel").classList.remove("visible");
+      document.getElementById("dataStatus").style.display = "none";
+
+      currentStep = proj.currentStep || 1;
+      for (let s = 1; s <= 4; s++) renderCriteria(s);
+      updateAllScores();
+      goToStep(currentStep);
+      renderProjectList();
+
+      if (!silent) showToast("Switched to " + (proj.name || "project"));
+      // Close mobile sidebar
+      document.getElementById("sidebar").classList.remove("open");
+    }
+
+    function renameProject(id) {
+      const proj = portfolio.find(p => p.id === id);
+      if (!proj) return;
+      const newName = prompt("Rename project:", proj.name);
+      if (newName && newName.trim()) {
+        proj.name = newName.trim();
+        proj.lastModified = Date.now();
+        if (id === currentProjectId) {
+          document.getElementById("projectName").value = proj.name;
+        }
+        localStorage.setItem("coreScorecardPortfolio", JSON.stringify(portfolio));
+        renderProjectList();
+      }
+    }
+
+    function deleteProject(id) {
+      if (portfolio.length <= 1) {
+        alert("You need at least one project.");
+        return;
+      }
+      if (!confirm("Delete this project permanently?")) return;
+      portfolio = portfolio.filter(p => p.id !== id);
+      localStorage.setItem("coreScorecardPortfolio", JSON.stringify(portfolio));
+      if (id === currentProjectId) {
+        switchToProject(portfolio[0].id, true);
+      }
+      renderProjectList();
+      showToast("Project deleted");
+    }
+
+    function resetCurrentProject() {
+      if (!confirm("Clear all scores and notes on the current project?")) return;
+      scores = {};
+      redFlags = {};
+      liveData = null;
+      llamaData = null;
+      selectedGeckoId = null;
+      document.getElementById("why1").value = "";
+      document.getElementById("why2").value = "";
+      document.getElementById("why3").value = "";
+      document.getElementById("why4").value = "";
+      document.getElementById("finalSummary").value = "";
+      document.getElementById("livePanel").classList.remove("visible");
+      document.getElementById("dataStatus").style.display = "none";
+      for (let s = 1; s <= 4; s++) renderCriteria(s);
+      updateAllScores();
+      goToStep(1);
+      saveState();
+      showToast("Current project reset");
+    }
+
+    // ========== APPLY ALL SUGGESTIONS ==========
+    function applyAllSuggestions() {
+      if (!liveData) {
+        showToast("Load live data first");
+        return;
+      }
+      let applied = 0;
+      const byStep = { 1: [], 2: [], 3: [], 4: [] };
+
+      for (let step = 1; step <= 4; step++) {
+        CRITERIA[step].forEach(c => {
+          const rec = getRecommendation(c.id);
+          if (rec) {
+            scores[c.id] = rec.score;
+            applied++;
+            byStep[step].push(`${c.title}: ${rec.score} — ${rec.reason}`);
+          }
+        });
+      }
+
+      // Auto-fill empty "Why this score?" boxes with the reasons
+      for (let step = 1; step <= 4; step++) {
+        const whyEl = document.getElementById("why" + step);
+        if (whyEl && !whyEl.value.trim() && byStep[step].length > 0) {
+          whyEl.value = "From live data:\n" + byStep[step].map(r => "• " + r).join("\n");
+        }
+      }
+
+      for (let s = 1; s <= 4; s++) renderCriteria(s);
+      updateAllScores();
+      saveState();
+      showToast(applied > 0 ? `Applied ${applied} suggested scores` : "No suggestions available for this project");
+    }
+
+    // ========== EXPORT ==========
+    function exportJSON() {
+      const data = {
+        project: document.getElementById("projectName").value || "Unnamed",
+        geckoId: selectedGeckoId,
+        date: document.getElementById("scoreDate").value,
+        scores: {
+          community: getStepScore(1),
+          opportunity: getStepScore(2),
+          risk: getStepScore(3),
+          economics: getStepScore(4),
+          total: getStepScore(1)+getStepScore(2)+getStepScore(3)+getStepScore(4)
+        },
+        criteria: scores,
+        notes: {
+          community: document.getElementById("why1").value,
+          opportunity: document.getElementById("why2").value,
+          risk: document.getElementById("why3").value,
+          economics: document.getElementById("why4").value,
+          summary: document.getElementById("finalSummary").value
+        },
+        liveSnapshot: liveData ? {
+          name: liveData.name,
+          symbol: liveData.symbol,
+          market_cap: liveData.market_data?.market_cap?.usd,
+          volume_24h: liveData.market_data?.total_volume?.usd,
+          twitter_followers: liveData.community_data?.twitter_followers,
+          commit_count_4_weeks: liveData.developer_data?.commit_count_4_weeks,
+          tvl: llamaData?.tvl || null
+        } : null,
+        rating: document.getElementById("ratingBadge").textContent,
+        exportedAt: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `CORE_${(data.project || "project").replace(/\s+/g, "_")}_${data.date || "undated"}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("Exported JSON (includes live snapshot)");
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
+    }
+
+    // ========== COMPARISON MODE ==========
+    let compareSelected = new Set(); // project ids
+    let compareLiveCache = {};       // id -> { market, community, dev, tvl, ... }
+
+    function renderCompareSelect() {
+      const grid = document.getElementById("compareSelectGrid");
+      if (!grid) return;
+      if (portfolio.length === 0) {
+        grid.innerHTML = `<span style="color:var(--text-muted);font-size:0.85rem;">No projects in portfolio yet.</span>`;
+        return;
+      }
+      grid.innerHTML = portfolio.map(p => {
+        const selected = compareSelected.has(p.id);
+        return `
+          <div class="compare-chip ${selected ? "selected" : ""}" onclick="toggleCompareSelect('${p.id}')">
+            ${escapeHtml(p.name || "Untitled")}
+            <span class="chip-score">${p.totalScore != null ? p.totalScore + "/40" : "—"}</span>
+          </div>`;
+      }).join("");
+    }
+
+    function toggleCompareSelect(id) {
+      if (compareSelected.has(id)) {
+        compareSelected.delete(id);
+      } else {
+        if (compareSelected.size >= 4) {
+          showToast("Max 4 projects for comparison");
+          return;
+        }
+        compareSelected.add(id);
+      }
+      renderCompareSelect();
+    }
+
+    function clearComparison() {
+      compareSelected.clear();
+      compareLiveCache = {};
+      renderCompareSelect();
+      document.getElementById("compareResults").innerHTML = `
+        <div class="compare-empty">
+          <h3>Competitor Comparison</h3>
+          <p>Select at least 2 projects from your portfolio above, then click <strong>Run Comparison</strong>.</p>
+        </div>`;
+      document.getElementById("compareStatus").textContent = "";
+    }
+
+    async function runComparison() {
+      if (compareSelected.size < 2) {
+        showToast("Select at least 2 projects");
+        return;
+      }
+
+      const status = document.getElementById("compareStatus");
+      const btn = document.getElementById("runCompareBtn");
+      btn.disabled = true;
+      status.textContent = "Fetching live data...";
+
+      const ids = [...compareSelected];
+      const projects = ids.map(id => portfolio.find(p => p.id === id)).filter(Boolean);
+
+      // Fetch live data in parallel for projects that have a gecko id
+      const fetches = projects.map(async (p) => {
+        if (!p.selectedGeckoId) {
+          compareLiveCache[p.id] = null;
+          return;
+        }
+        if (compareLiveCache[p.id] && compareLiveCache[p.id]._fetchedAt > Date.now() - 5 * 60 * 1000) {
+          return; // use cache < 5 min old
+        }
+        try {
+          const res = await fetch(
+            `https://api.coingecko.com/api/v3/coins/${p.selectedGeckoId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`
+          );
+          if (!res.ok) throw new Error("fail");
+          const data = await res.json();
+
+          // Try DefiLlama
+          let tvl = null, tvlChange7d = null;
+          try {
+            const protoRes = await fetch("https://api.llama.fi/protocols");
+            if (protoRes.ok) {
+              const protos = await protoRes.json();
+              const match = protos.find(x =>
+                (x.gecko_id && x.gecko_id === p.selectedGeckoId) ||
+                (x.name && x.name.toLowerCase() === (data.name || "").toLowerCase())
+              );
+              if (match) {
+                tvl = match.tvl;
+                tvlChange7d = match.change_7d;
+              }
+            }
+          } catch (e) {}
+
+          compareLiveCache[p.id] = {
+            name: data.name,
+            symbol: data.symbol,
+            image: data.image?.thumb,
+            rank: data.market_cap_rank,
+            mcap: data.market_data?.market_cap?.usd,
+            volume: data.market_data?.total_volume?.usd,
+            price: data.market_data?.current_price?.usd,
+            twitter: data.community_data?.twitter_followers,
+            reddit: data.community_data?.reddit_subscribers,
+            commits: data.developer_data?.commit_count_4_weeks,
+            stars: data.developer_data?.stars,
+            tvl,
+            tvlChange7d,
+            _fetchedAt: Date.now()
+          };
+        } catch (e) {
+          compareLiveCache[p.id] = null;
+        }
+      });
+
+      await Promise.all(fetches);
+
+      renderComparisonTable(projects);
+      status.textContent = `Compared ${projects.length} projects`;
+      btn.disabled = false;
+      showToast("Comparison ready");
+    }
+
+    function fmtNum(n) {
+      if (n == null || isNaN(n)) return "—";
+      if (n >= 1e9) return (n / 1e9).toFixed(2) + "B";
+      if (n >= 1e6) return (n / 1e6).toFixed(2) + "M";
+      if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
+      return Number(n).toLocaleString();
+    }
+
+    function getSectionScore(proj, step) {
+      const scores = proj.scores || {};
+      const ids = CRITERIA[step].map(c => c.id);
+      return ids.reduce((sum, id) => sum + (scores[id] ?? 0), 0);
+    }
+
+    function renderComparisonTable(projects) {
+      const container = document.getElementById("compareResults");
+
+      // Helper to find best/worst for highlighting
+      function highlightClass(values, idx, higherIsBetter = true) {
+        const nums = values.map(v => (v == null || isNaN(v) ? null : Number(v)));
+        const valid = nums.filter(v => v != null);
+        if (valid.length < 2) return "";
+        const best = higherIsBetter ? Math.max(...valid) : Math.min(...valid);
+        const worst = higherIsBetter ? Math.min(...valid) : Math.max(...valid);
+        if (nums[idx] === best && best !== worst) return "best";
+        if (nums[idx] === worst && best !== worst) return "worst";
+        return "";
+      }
+
+      const live = projects.map(p => compareLiveCache[p.id] || {});
+      const totals = projects.map(p => p.totalScore ?? 0);
+      const communityScores = projects.map(p => getSectionScore(p, 1));
+      const opportunityScores = projects.map(p => getSectionScore(p, 2));
+      const riskScores = projects.map(p => getSectionScore(p, 3));
+      const economicsScores = projects.map(p => getSectionScore(p, 4));
+
+      const mcaps = live.map(l => l.mcap);
+      const volumes = live.map(l => l.volume);
+      const ranks = live.map(l => l.rank);
+      const commits = live.map(l => l.commits);
+      const twitters = live.map(l => l.twitter);
+      const tvls = live.map(l => l.tvl);
+
+      let html = `
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th style="min-width:140px;">Metric</th>
+                ${projects.map((p, i) => `
+                  <th>
+                    <div class="compare-project-header">
+                      <span class="name">${escapeHtml(p.name)}</span>
+                      <span class="total">${totals[i]}/40</span>
+                    </div>
+                  </th>`).join("")}
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="compare-section-row"><td colspan="${projects.length + 1}">Live Market Data</td></tr>
+              <tr>
+                <td class="metric-label">Market Cap</td>
+                ${mcaps.map((v, i) => `<td class="${highlightClass(mcaps, i, true)}">$${fmtNum(v)}</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label">Rank</td>
+                ${ranks.map((v, i) => `<td class="${highlightClass(ranks, i, false)}">#${v ?? "—"}</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label">24h Volume</td>
+                ${volumes.map((v, i) => `<td class="${highlightClass(volumes, i, true)}">$${fmtNum(v)}</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label">TVL (DefiLlama)</td>
+                ${tvls.map((v, i) => `<td class="${highlightClass(tvls, i, true)}">$${fmtNum(v)}</td>`).join("")}
+              </tr>
+
+              <tr class="compare-section-row"><td colspan="${projects.length + 1}">Developer & Community</td></tr>
+              <tr>
+                <td class="metric-label">GitHub Commits (4w)</td>
+                ${commits.map((v, i) => `<td class="${highlightClass(commits, i, true)}">${v ?? "—"}</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label">Twitter Followers</td>
+                ${twitters.map((v, i) => `<td class="${highlightClass(twitters, i, true)}">${fmtNum(v)}</td>`).join("")}
+              </tr>
+
+              <tr class="compare-section-row"><td colspan="${projects.length + 1}">CORE Scores</td></tr>
+              <tr>
+                <td class="metric-label">Community & Adoption</td>
+                ${communityScores.map((v, i) => `<td class="${highlightClass(communityScores, i, true)}">${v}/10</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label">Opportunity</td>
+                ${opportunityScores.map((v, i) => `<td class="${highlightClass(opportunityScores, i, true)}">${v}/10</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label">Risk <span style="font-weight:400;opacity:0.7">(↑ better)</span></td>
+                ${riskScores.map((v, i) => `<td class="${highlightClass(riskScores, i, true)}">${v}/10</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label">Economics</td>
+                ${economicsScores.map((v, i) => `<td class="${highlightClass(economicsScores, i, true)}">${v}/10</td>`).join("")}
+              </tr>
+              <tr>
+                <td class="metric-label" style="font-weight:800;color:var(--text);">Total Score</td>
+                ${totals.map((v, i) => `<td class="${highlightClass(totals, i, true)}" style="font-weight:800;font-size:1rem;">${v}/40</td>`).join("")}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:1rem;display:flex;gap:0.6rem;flex-wrap:wrap;">
+          ${projects.map(p => `
+            <button class="btn btn-ghost" onclick="switchToProject('${p.id}'); goToStep(1);">
+              Open ${escapeHtml(p.name)} →
+            </button>`).join("")}
+        </div>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    init();
+  </script>
+</body>
+</html>
